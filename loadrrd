@@ -1,0 +1,23 @@
+#!/bin/bash
+
+source .config
+
+DT=`date +"%Y%m%d-%H%M"`
+ARCH=archivedCSV
+
+if [ ! -f $RRDFILE ]
+then
+	echo File $RRDFILE not found. Run the initrrd script.
+	exit 1
+fi
+
+exec 1>> update-$DT.log
+exec 2>&1
+
+#	DS:temperature:GAUGE:86400:-273:400 \
+#	DS:humidity:GAUGE:86400:-1:105 \
+cat wh.csv | perl -pe 's/(\d+),(\d),(.*?),(.*?)/\1:\2:\3:\4/' | sort -n | xargs -n 4 rrdtool update $RRDFILE 
+
+[ ! -d $ARCH ] && mkdir -p $ARCH
+mv wh.csv $ARCH/wh-$DT.csv
+

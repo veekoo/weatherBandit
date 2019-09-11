@@ -1,0 +1,4 @@
+#!/bin/bash
+logdir=/home/pi/weather
+rtl_433 -f 915000000 -l 0 >> ${logdir}/wh.log
+

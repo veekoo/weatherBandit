@@ -1,0 +1,9 @@
+RRDFILE=temphum.rrd
+s3Bucket="myRainBushel"
+fileName="temperatureGraph.png"
+fileNameWk="temperatureGraph-weekly.png"
+pathToFile="/var/www/html/img"
+contentType="image/png"
+s3AccessKey="Your accesskey from the AWS console"
+s3SecretKey="Your secretkey from the AWS console"
+

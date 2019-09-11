@@ -1,0 +1,23 @@
+#!/bin/bash
+
+source .config
+
+if [ -f $RRDFILE ]
+then
+	echo File $RRDFILE already exists. Delete it first to confirm.
+	exit 1
+fi
+
+rrdtool create $RRDFILE --step 300 --start now-10d \
+	DS:channel:GAUGE:86400:0:1024 \
+	DS:temperature:GAUGE:86400:-273:400 \
+	DS:humidity:GAUGE:86400:-1:105 \
+ 	RRA:MIN:0.5:12:228 \
+ 	RRA:MAX:0.5:12:228 \
+ 	RRA:MIN:0.5:12:87600 \
+ 	RRA:MAX:0.5:12:87600 \
+	RRA:AVERAGE:0.9:1:288 \
+	RRA:AVERAGE:0.9:1:8640 \
+	RRA:AVERAGE:0.9:1:604800 
+
+

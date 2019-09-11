@@ -1,0 +1,10 @@
+#!/bin/bash
+
+mydir=`dirname $0`
+cd $mydir
+rm update*log
+$mydir/whplot
+$mydir/loadrrd
+$mydir/rrdplot
+$mydir/uploadplot
+

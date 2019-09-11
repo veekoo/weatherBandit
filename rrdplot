@@ -1,0 +1,23 @@
+#!/bin/bash
+
+source .config
+
+rrdtool graph $pathToFile/$fileNameWk \
+	-s now-1w \
+	-h 600 --full-size-mode \
+	DEF:temp=$RRDFILE:temperature:AVERAGE \
+	DEF:hum=$RRDFILE:humidity:AVERAGE \
+	DEF:ch=$RRDFILE:channel:LAST \
+	CDEF:t1=1,ch,EQ,temp,PREV,IF \
+	CDEF:h1=1,ch,EQ,hum,PREV,IF \
+	CDEF:t2=2,ch,EQ,temp,PREV,IF \
+	CDEF:h2=2,ch,EQ,hum,PREV,IF \
+	CDEF:t3=3,ch,EQ,temp,PREV,IF \
+	CDEF:h3=3,ch,EQ,hum,PREV,IF \
+	LINE:h1#ff0000:"Ch1 Humidity":dashes \
+	LINE:h2#0000ff:"Ch2 Humidity":dashes \
+	LINE:h3#0f0000:"Ch3 Humidity":dashes \
+	LINE2:t1#ff0000:"Ch1 Temp" \
+	LINE2:t2#0000ff:"Ch2 Temp" \
+	LINE2:t3#0f0000:"Ch3 Temp" 
+

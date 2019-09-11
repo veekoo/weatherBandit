@@ -1,0 +1,15 @@
+[Unit]
+Description=Weatherbandit 915MHz beacon logger
+After=network.target
+
+[Service]
+ExecStart=/home/pi/weather/startbandit
+WorkingDirectory=/home/pi/weather
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+
