@@ -1,6 +1,7 @@
 #!/usr/bin/gnuplot
 
-load ".config"
+fileName="weatherBandit.png"
+pathToFile="/var/www/html/img"
 system("./whlog2csv")
 
 set datafile separator ","
