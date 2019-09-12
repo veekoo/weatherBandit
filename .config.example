@@ -6,4 +6,8 @@ pathToFile="/var/www/html/img"
 contentType="image/png"
 s3AccessKey="Your accesskey from the AWS console"
 s3SecretKey="Your secretkey from the AWS console"
+wyzeip=10.0.0.yourCamIp
+wyzeuser=fromAppRtspMenu
+wyzepass=seeAbove
+wyzeFileName=wyze.jpg
 
