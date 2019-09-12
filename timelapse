@@ -1,0 +1,34 @@
+#!/bin/bash
+
+ts=`date +"%s"`
+dt=`date +"%Y%m%d-%H%M"`
+tlTemp=/tmp/timeLapse
+source .config
+
+./wyzecapture
+
+[ ! -d ${tlTemp} ] && mkdir -p ${tlTemp}
+cp ${pathToFile}/${wyzeFileName} ${tlTemp}/timelapse-${ts}.jpg
+
+## add morning and evening detection to trigger this
+## frame = black and files>48 (4hr) : run ffmpeg
+## frame = black and only file (3?) : delete
+fc=`ls ${tlTemp}/timelapse-*.jpg | wc -l`
+br=`./brightness` 
+
+# morning means more than 3 bright pics
+if [ $br -le 30 -a $fc -le 3 ]
+then
+	rm -f ${tlTemp}/timelapse-*.jpg
+fi
+
+# evening means low brightness and pleanty of pictures
+if [ $br -le 30 -a $fc -ge 50 ]
+then
+	cat ${tlTemp}/*.jpg | ffmpeg -f image2pipe -r 1 -vcodec mjpeg -i - -vcodec libx264 ${tlTemp}/timelapse-${dt}.mp4
+	mv ${tlTemp}/timelapse-${dt}.mp4 ${pathToFile}/
+	rm -f ${tlTemp}/timelapse-*.jpg 
+fi
+
+# overlay plot on the video
+ 

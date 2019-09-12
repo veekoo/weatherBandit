@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source .config
+
+ffmpeg -ss 2 -i "rtsp://${wyzeuser}:${wyzepass}@${wyzeip}/live" -y -f image2 -qscale 0 -frames 1 ${pathToFile}/${wyzeFileName} 2> /tmp/wyzecapture.log

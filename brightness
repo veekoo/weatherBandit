@@ -1,0 +1,12 @@
+#!/bin/bash
+
+source .config
+
+convert ${pathToFile}/${wyzeFileName} -set colorspace Gray -separate -average /tmp/brightness-$$.png
+convert /tmp/brightness-$$.png -resize 1x1 /tmp/out-$$.ppm
+br=`tail -2 /tmp/out-$$.ppm | head -1`
+rm -f /tmp/out-$$.ppm /tmp/brightness-$$.png
+echo ${br}
+exit ${br}
+
+
