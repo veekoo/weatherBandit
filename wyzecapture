@@ -2,4 +2,24 @@
 
 source .config
 
-ffmpeg -ss 2 -i "rtsp://${wyzeuser}:${wyzepass}@${wyzeip}/live" -y -f image2 -qscale 0 -frames 1 ${pathToFile}/${wyzeFileName} 2> /tmp/wyzecapture.log
+ping -c 3 ${wyzeip}
+
+touch ${pathToFile}/${wyzeFileName}
+fs=0
+fs=`stat --printf="%s" ${pathToFile}/${wyzeFileName}`
+retry=$maxRetry
+
+if [ $fs -gt $minWyzeSize ] 
+then
+	mv -f ${pathToFile}/${wyzeFileName} ${pathToFile}/prev${wyzeFileName}
+fi
+
+while [ $fs -lt $minWyzeSize -a $retry -gt 0 ]
+do
+	[ $retry -lt $maxRetry ] && echo Out file too small: $(($fs / 1024)) kb. Retries: $retry
+	ffmpeg -ss 2 -i "rtsp://${wyzeuser}:${wyzepass}@${wyzeip}/live" -y -f image2 -qscale 0 -frames 1 ${pathToFile}/${wyzeFileName} 2> /tmp/wyzecapture.log
+	retry=$(($retry - 1))
+	fs=`stat --printf="%s" ${pathToFile}/${wyzeFileName}`
+done
+
+

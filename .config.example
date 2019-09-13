@@ -10,4 +10,6 @@ wyzeip=10.0.0.yourCamIp
 wyzeuser=fromAppRtspMenu
 wyzepass=seeAbove
 wyzeFileName=wyze.jpg
+maxRetry=3
+minWyzeSize=200000000
 
