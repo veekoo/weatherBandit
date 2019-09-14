@@ -20,4 +20,4 @@ cat wh.csv | perl -pe 's/(\d+),(\d),(.*?),(.*?)/\1:\2:\3:\4/' | sort -n | xargs 
 
 [ ! -d $ARCH ] && mkdir -p $ARCH
 mv wh.csv $ARCH/wh-$DT.csv
-
+ls -1tr $ARCH | head -n -10 | xargs -d '\n' rm -f -- 

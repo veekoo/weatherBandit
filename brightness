@@ -2,9 +2,11 @@
 
 source .config
 
+[ ! -s  ${pathToFile}/${wyzeFileName} -o ! -f  ${pathToFile}/${wyzeFileName} ] && echo -1 && exit -1
+
 convert ${pathToFile}/${wyzeFileName} -set colorspace Gray -separate -average /tmp/brightness-$$.png
 convert /tmp/brightness-$$.png -resize 1x1 /tmp/out-$$.ppm
-br=`tail -2 /tmp/out-$$.ppm | head -1`
+br=`cat /tmp/out-$$.ppm | perl -ne 'if (/^255/){$o=1;next;};next if (!$o);@v=split(//);for $i (@v) { $c++;$s+=ord($i);}$br=($br+($s/$c))/2; print int($br);'`
 rm -f /tmp/out-$$.ppm /tmp/brightness-$$.png
 echo ${br}
 exit ${br}

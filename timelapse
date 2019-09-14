@@ -14,11 +14,11 @@ source .config
 cp ${pathToFile}/${wyzeFileName} ${tlTemp}/timelapse-${ts}.jpg
 
 # Overlay graph
-#convert ${pathToFile}/${wyzeFileName} ${pathToFile}/weatherBandit.png -compose blend -define compose:args=50 -composite -set option:modulate:colorspace hsb -modulate 100,100,50 ${pathToFile}/test.png
-#convert ${pathToFile}/${wyzeFileName} ${pathToFile}/weatherBandit.png -compose blend -define compose:args=50 -composite -set option:modulate:colorspace hsb -modulate 100,100,50 ${pathToFile}/test.png
-#composite -compose atop -geometry -13-17 ${pathToFile}/weatherBandit.png ${pathToFile}/${wyzeFileName}  ${pathToFile}/test.png
-#composite -transparent -gravite bottom ${pathToFile}/weatherBandit.png ${pathToFile}/${wyzeFileName}  ${pathToFile}/test.png
-composite -gravity South ${pathToFile}/weatherBandit.png ${pathToFile}/${wyzeFileName} -define filter:option=average -resize 800x600 ${pathToFile}/test.png
+# overlay plot on the video
+#composite -gravity South ${pathToFile}/weatherBandit.png ${pathToFile}/${wyzeFileName} -define filter:option=average -resize 800x600 ${pathToFile}/test.png
+convert ${pathToFile}/${wyzeFileName} -gravity SouthWest -transparent-color white -geometry 1600x700 ${pathToFile}/overlay-graph.png -compose ModulusSubtract -define compose:args=30 -composite -set option:modulate:colorspace hsb -background none -resize 1024x768 ${tlTemp}/timelapse-${ts}.jpg
+
+cp ${tlTemp}/timelapse-${ts}.jpg ${pathToFile}/${wyzeFileName} 
 
 ## add morning and evening detection to trigger this
 ## frame = black and files>48 (4hr) : run ffmpeg
@@ -27,6 +27,12 @@ fc=`ls ${tlTemp}/timelapse-*.jpg | wc -l`
 br=`./brightness` 
 
 echo Files $fc brightness $br > /tmp/timelapseStatus.log
+
+if [ $br -eq -1 ]
+then
+	echo No image from camera. Bailing out..
+	exit -1
+fi
 
 # morning means more than 3 bright pics
 if [ $br -le 45 -a $fc -le 3 ]
@@ -42,5 +48,4 @@ then
 	rm -f ${tlTemp}/timelapse-*.jpg 
 fi
 
-# overlay plot on the video
  

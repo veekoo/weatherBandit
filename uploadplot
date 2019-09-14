@@ -5,59 +5,41 @@ source .config
 ## gnuplot graph
 date=`date +%Y%m%d`
 dateFormatted=`date -R`
-relativePath="/${s3Bucket}/${fileName}"
 aclhdr="x-amz-acl: public-read" 
 aclhdrCan=`echo ${aclhdr} | perl -pe 's,\s,,g'`
-stringToSign="PUT\n\n${contentType}\n${dateFormatted}\n${relativePath}"
-signature=`echo -en ${stringToSign} | openssl sha1 -hmac ${s3SecretKey} -binary | base64`
-curl -X PUT -T "${pathToFile}/${fileName}" \
--H "Host: ${s3Bucket}.s3.amazonaws.com" \
--H "Date: ${dateFormatted}" \
--H "Content-Type: ${contentType}" \
--H "Authorization: AWS ${s3AccessKey}:${signature}" \
-http://${s3Bucket}.s3.amazonaws.com/${fileName}
 
-sleep 1
+for fileName in ${fileName} ${fileNameWk} ${wyzeFileName}
+do
+	echo Uploading ${fileName}
 
-date=`date +%Y%m%d`
-dateFormatted=`date -R`
-#stringToSign="PUT\n\n${dateFormatted}\n${contentType}\n${aclhdrCan}\n${relativePath}"
-stringToSign="PUT\n\n\n${dateFormatted}\n${aclhdrCan}\n${relativePath}?acl"
-signature=`echo -en ${stringToSign} | openssl sha1 -hmac ${s3SecretKey} -binary | base64`
-curl -X PUT \
--H "Host: ${s3Bucket}.s3.amazonaws.com" \
--H "${aclhdr}" \
--H "Date: ${dateFormatted}" \
--H "Authorization: AWS ${s3AccessKey}:${signature}" \
-http://${s3Bucket}.s3.amazonaws.com/${fileName}?acl
+	## Loop body has The Magic
+	relativePath="/${s3Bucket}/${fileName}"
+	date=`date +%Y%m%d`
+	dateFormatted=`date -R`
+	relativePath="/${s3Bucket}/${fileName}"
+	aclhdr="x-amz-acl: public-read" 
+	aclhdrCan=`echo ${aclhdr} | perl -pe 's,\s,,g'`
+	stringToSign="PUT\n\n${contentType}\n${dateFormatted}\n${relativePath}"
+	signature=`echo -en ${stringToSign} | openssl sha1 -hmac ${s3SecretKey} -binary | base64`
+	curl -X PUT -T "${pathToFile}/${fileName}" \
+	-H "Host: ${s3Bucket}.s3.amazonaws.com" \
+	-H "Date: ${dateFormatted}" \
+	-H "Content-Type: ${contentType}" \
+	-H "Authorization: AWS ${s3AccessKey}:${signature}" \
+	http://${s3Bucket}.s3.amazonaws.com/${fileName}
 
-## rrd graph
-fileName=${fileNameWk}
-relativePath="/${s3Bucket}/${fileName}"
-date=`date +%Y%m%d`
-dateFormatted=`date -R`
-relativePath="/${s3Bucket}/${fileName}"
-aclhdr="x-amz-acl: public-read" 
-aclhdrCan=`echo ${aclhdr} | perl -pe 's,\s,,g'`
-stringToSign="PUT\n\n${contentType}\n${dateFormatted}\n${relativePath}"
-signature=`echo -en ${stringToSign} | openssl sha1 -hmac ${s3SecretKey} -binary | base64`
-curl -X PUT -T "${pathToFile}/${fileName}" \
--H "Host: ${s3Bucket}.s3.amazonaws.com" \
--H "Date: ${dateFormatted}" \
--H "Content-Type: ${contentType}" \
--H "Authorization: AWS ${s3AccessKey}:${signature}" \
-http://${s3Bucket}.s3.amazonaws.com/${fileName}
+	sleep 1
 
-sleep 1
-
-date=`date +%Y%m%d`
-dateFormatted=`date -R`
-#stringToSign="PUT\n\n${dateFormatted}\n${contentType}\n${aclhdrCan}\n${relativePath}"
-stringToSign="PUT\n\n\n${dateFormatted}\n${aclhdrCan}\n${relativePath}?acl"
-signature=`echo -en ${stringToSign} | openssl sha1 -hmac ${s3SecretKey} -binary | base64`
-curl -X PUT \
--H "Host: ${s3Bucket}.s3.amazonaws.com" \
--H "${aclhdr}" \
--H "Date: ${dateFormatted}" \
--H "Authorization: AWS ${s3AccessKey}:${signature}" \
-http://${s3Bucket}.s3.amazonaws.com/${fileName}?acl
+	date=`date +%Y%m%d`
+	dateFormatted=`date -R`
+	#stringToSign="PUT\n\n${dateFormatted}\n${contentType}\n${aclhdrCan}\n${relativePath}"
+	stringToSign="PUT\n\n\n${dateFormatted}\n${aclhdrCan}\n${relativePath}?acl"
+	signature=`echo -en ${stringToSign} | openssl sha1 -hmac ${s3SecretKey} -binary | base64`
+	curl -X PUT \
+	-H "Host: ${s3Bucket}.s3.amazonaws.com" \
+	-H "${aclhdr}" \
+	-H "Date: ${dateFormatted}" \
+	-H "Authorization: AWS ${s3AccessKey}:${signature}" \
+	http://${s3Bucket}.s3.amazonaws.com/${fileName}?acl
+	sleep 1
+done
