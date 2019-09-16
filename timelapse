@@ -3,32 +3,36 @@
 mydir=`dirname $0`
 cd $mydir
 
+force=0
+[ "$1" = "-f" ] && force=1
+
 ts=`date +"%s"`
 dt=`date +"%Y%m%d-%H%M"`
-tlTemp=/tmp/timeLapse
 source .config
 
 ./wyzecapture
 
 [ ! -d ${tlTemp} ] && mkdir -p ${tlTemp}
+
+## add morning and evening detection to trigger things
+## frame = black and files>48 (4hr) : run ffmpeg
+## frame = black and only file (3?) : delete
+fc=`ls ${tlTemp}/timelapse-*.jpg | wc -l`
+br=`./brightness` 
+WEATHERSTAT="`grep ,2, archivedCSV/\`ls archivedCSV/|tail -1\` |tail -1|perl -pe 's/^.*,(.*?),(.*?)$/\1C\n\2%/'`"
+
+echo Files $fc brightness $br > /tmp/timelapseStatus.log
+
 cp ${pathToFile}/${wyzeFileName} ${tlTemp}/timelapse-${ts}.jpg
 
 # Overlay graph
 # overlay plot on the video
 #composite -gravity South ${pathToFile}/weatherBandit.png ${pathToFile}/${wyzeFileName} -define filter:option=average -resize 800x600 ${pathToFile}/test.png
-convert ${pathToFile}/${wyzeFileName} -gravity SouthWest -transparent-color white -geometry 1600x700 ${pathToFile}/overlay-graph.png -compose ModulusSubtract -define compose:args=30 -composite -set option:modulate:colorspace hsb -background none -resize 1024x768 ${tlTemp}/timelapse-${ts}.jpg
+convert ${pathToFile}/${wyzeFileName} -gravity SouthWest -transparent-color white -geometry 1600x700 ${pathToFile}/overlay-graph.png -compose ModulusSubtract -define compose:args=30 -composite -set option:modulate:colorspace hsb -background none -resize 1024x768 -font helvetica -fill red -pointsize 36 -draw "text 900,500 '$WEATHERSTAT'" ${tlTemp}/timelapse-${ts}.jpg
 
 cp ${tlTemp}/timelapse-${ts}.jpg ${pathToFile}/${wyzeFileName} 
 
-## add morning and evening detection to trigger this
-## frame = black and files>48 (4hr) : run ffmpeg
-## frame = black and only file (3?) : delete
-fc=`ls ${tlTemp}/timelapse-*.jpg | wc -l`
-br=`./brightness` 
-
-echo Files $fc brightness $br > /tmp/timelapseStatus.log
-
-if [ $br -eq -1 ]
+if [ $br -eq -1 -a $force -ne 1 ]
 then
 	echo No image from camera. Bailing out..
 	exit -1
@@ -41,11 +45,13 @@ then
 fi
 
 # evening means low brightness and pleanty of pictures
-if [ $br -le 45 -a $fc -ge 50 ]
+if [ $force -eq 1 -o $br -le 45 -a $fc -ge 50 ]
 then
 	cat ${tlTemp}/*.jpg | ffmpeg -f image2pipe -r 1 -vcodec mjpeg -i - -vcodec libx264 ${tlTemp}/timelapse-${dt}.mp4
 	mv ${tlTemp}/timelapse-${dt}.mp4 ${pathToFile}/
 	rm -f ${tlTemp}/timelapse-*.jpg 
+	ls -1 /var/www/html/img/*mp4 | perl -pe 'chomp;s,.*/(.*?\.mp4),<a href=\1>\1<\/a><br>\n,' > ${pathToFile}/timelapse.html
+	chmod a+r ${pathToFile}/timelapse.html
 fi
 
  
