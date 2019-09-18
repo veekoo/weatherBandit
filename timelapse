@@ -52,7 +52,7 @@ then
 	cat ${tlTemp}/*.jpg | nice ffmpeg -f image2pipe -r 1 -vcodec mjpeg -i - -vcodec libx264 ${tlTemp}/timelapse-${dt}.mp4
 	mv ${tlTemp}/timelapse-${dt}.mp4 ${pathToFile}/
 	rm -f ${tlTemp}/timelapse-*.jpg 
-	ls -1 ${pathToFile}/img/*mp4 | perl -pe 'chomp;s,.*/(.*?\.mp4),<a href=\1>\1<\/a><br>\n,' > ${pathToFile}/timelapse.html
+	ls -1 ${pathToFile}/*mp4 | perl -pe 'chomp;s,.*/(.*?\.mp4),<a href=\1>\1<\/a><br>\n,' > ${pathToFile}/timelapse.html
 	chmod a+r ${pathToFile}/timelapse.html
 fi
 
