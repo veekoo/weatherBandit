@@ -20,6 +20,7 @@ source .config
 fc=`ls ${tlTemp}/timelapse-*.jpg | wc -l`
 br=`./brightness` 
 WEATHERSTAT="`grep ,2, archivedCSV/\`ls archivedCSV/|tail -1\` |tail -1|perl -pe 's/^.*,(.*?),(.*?)$/\1C\n\2%/'`"
+INDOORSTAT="`grep ,4, archivedCSV/\`ls archivedCSV/|tail -1\` |tail -1|perl -pe 's/^.*,(.*?),(.*?)$/\1C\n\2%/'`"
 
 echo Files $fc brightness $br > /tmp/timelapseStatus.log
 
@@ -28,9 +29,10 @@ cp ${pathToFile}/${wyzeFileName} ${tlTemp}/timelapse-${ts}.jpg
 # Overlay graph
 # overlay plot on the video
 #composite -gravity South ${pathToFile}/weatherBandit.png ${pathToFile}/${wyzeFileName} -define filter:option=average -resize 800x600 ${pathToFile}/test.png
-convert ${pathToFile}/${wyzeFileName} -gravity SouthWest -transparent-color white -geometry 1600x700 ${pathToFile}/overlay-graph.png -compose ModulusSubtract -define compose:args=30 -composite -set option:modulate:colorspace hsb -background none -resize 1024x768 -font helvetica -fill red -pointsize 36 -draw "text 900,500 '$WEATHERSTAT'" ${tlTemp}/timelapse-${ts}.jpg
+nice convert ${pathToFile}/${wyzeFileName} -gravity SouthWest -transparent-color white -geometry 1600x700 ${pathToFile}/overlay-graph.png -compose ModulusSubtract -define compose:args=30 -composite -set option:modulate:colorspace hsb -background none -resize 1024x768 -font helvetica -fill darkblue -pointsize 36 -draw "text 900,500 '$WEATHERSTAT'" -font helvetica -fill orange -pointsize 24 -draw "text 900,450 '$INDOORSTAT'" ${tlTemp}/timelapse-${ts}.jpg
 
-cp ${tlTemp}/timelapse-${ts}.jpg ${pathToFile}/${wyzeFileName} 
+
+cp ${tlTemp}/timelapse-${ts}.jpg ${pathToFile}/${timelapse}
 
 if [ $br -eq -1 -a $force -ne 1 ]
 then
@@ -47,10 +49,10 @@ fi
 # evening means low brightness and pleanty of pictures
 if [ $force -eq 1 -o $br -le 45 -a $fc -ge 50 ]
 then
-	cat ${tlTemp}/*.jpg | ffmpeg -f image2pipe -r 1 -vcodec mjpeg -i - -vcodec libx264 ${tlTemp}/timelapse-${dt}.mp4
+	cat ${tlTemp}/*.jpg | nice ffmpeg -f image2pipe -r 1 -vcodec mjpeg -i - -vcodec libx264 ${tlTemp}/timelapse-${dt}.mp4
 	mv ${tlTemp}/timelapse-${dt}.mp4 ${pathToFile}/
 	rm -f ${tlTemp}/timelapse-*.jpg 
-	ls -1 /var/www/html/img/*mp4 | perl -pe 'chomp;s,.*/(.*?\.mp4),<a href=\1>\1<\/a><br>\n,' > ${pathToFile}/timelapse.html
+	ls -1 ${pathToFile}/img/*mp4 | perl -pe 'chomp;s,.*/(.*?\.mp4),<a href=\1>\1<\/a><br>\n,' > ${pathToFile}/timelapse.html
 	chmod a+r ${pathToFile}/timelapse.html
 fi
 

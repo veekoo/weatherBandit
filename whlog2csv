@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cat wh.log | perl -ne 'use Date::Parse;$ts = str2time($1) if (/time.*\:\s(.*)/i);$c=$1 if(/channel.*(\d)/i);$t=$1 if(/^tempe.*\s(\d+\.\d)/i); print "$ts,$c,$t,$1\n" if (/^humidity.*\s(\d+)\s/i)' > wh.csv
+cat wh.log.* wh.log 2> /dev/null | perl -ne 'use Date::Parse;$ts = str2time($1) if (/time.*\:\s(.*)/i);$c=$1 if(/channel.*(\d)/i);$t=$1 if(/^tempe.*\s(\d+\.\d)/i); print "$ts,$c,$t,$1\n" if (/^humidity.*\s(\d+)\s/i)' > wh.csv
 
 
 

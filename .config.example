@@ -13,4 +13,5 @@ wyzeFileName=wyze.jpg
 maxRetry=3
 minWyzeSize=200000000
 tlTemp=/tmp/timeLapse
+timelapse=timelapse.jpg
 

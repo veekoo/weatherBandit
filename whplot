@@ -21,13 +21,13 @@ set ylabel "Temperature C"
 set y2label "Humidity %"
 #set y2range [5:100]
 set y2tics 10 nomirror 
-plot for [ch=1:3] '<grep ,'.ch.', wh.csv' using (timecolumn(1)-8*3600):3 with line lc ch lw 2 title 'Ch '.ch, \
-     for [ch=1:3] '<grep ,'.ch.', wh.csv' using (timecolumn(1)-8*3600):4 with line dt 2 lc ch title '' axes x1y2
+plot for [ch=1:4] '<grep ,'.ch.', wh.csv' using (timecolumn(1)-8*3600):3 with line lc ch lw 2 title 'Ch '.ch, \
+     for [ch=1:4] '<grep ,'.ch.', wh.csv' using (timecolumn(1)-8*3600):4 with line dt 2 lc ch title '' axes x1y2
 
 
 set output pathToFile."/".bannerFileName
 set term pngcairo dashed transparent size 900,200
 unset title
 unset xlabel 
-plot for [ch=1:3] '<grep ,'.ch.', wh.csv' using 1:3 with line lc ch lw 2 title 'Ch '.ch, \
-     for [ch=1:3] '<grep ,'.ch.', wh.csv' using 1:4 with line dt 2 lc ch title '' axes x1y2 
+plot for [ch=1:4] '<grep ,'.ch.', wh.csv' using 1:3 with line lc ch lw 2 title 'Ch '.ch, \
+     for [ch=1:4] '<grep ,'.ch.', wh.csv' using 1:4 with line dt 2 lc ch title '' axes x1y2 

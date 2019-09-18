@@ -1,0 +1,6 @@
+#!/bin/bash
+
+me=`dirname $0`
+$me/therm.py -s -f 0 | perl -ne '$h=$1 if (/humid.*\s(\d+)/i);$t=$1 if (/temp.*\s(\d+)/i);END{$tc=(($t-32)*5)/9;$tc=int(10*$tc)/10;print "time : ".`date +"%Y-%m-%d %H:%M:%S"`."channel : 4\ntemperature : ".$tc." C \nhumidity : ".$h." \n"}'
+
+

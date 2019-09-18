@@ -8,7 +8,7 @@ dateFormatted=`date -R`
 aclhdr="x-amz-acl: public-read" 
 aclhdrCan=`echo ${aclhdr} | perl -pe 's,\s,,g'`
 
-for fileName in ${fileName} ${fileNameWk} ${wyzeFileName}
+for fileName in ${fileName} ${fileNameWk} ${wyzeFileName} ${timelapse}
 do
 	echo Uploading ${fileName}
 
