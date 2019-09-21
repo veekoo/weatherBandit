@@ -28,8 +28,11 @@ cp ${pathToFile}/${wyzeFileName} ${tlTemp}/timelapse-${ts}.jpg
 
 # Overlay graph
 # overlay plot on the video
+# imagemagick -size 400x100 xc:none -pointsize 36 -fill white -stroke blue -strokewidth 4 -gravity center -annotate +0+0 "Your Text Here" -blur 0x3 -stroke none -annotate +0+0 "Your Text Here" result.png
 #composite -gravity South ${pathToFile}/weatherBandit.png ${pathToFile}/${wyzeFileName} -define filter:option=average -resize 800x600 ${pathToFile}/test.png
-nice convert ${pathToFile}/${wyzeFileName} -gravity SouthWest -transparent-color white -geometry 1600x700 ${pathToFile}/overlay-graph.png -compose ModulusSubtract -define compose:args=30 -composite -set option:modulate:colorspace hsb -background none -resize 1024x768 -font helvetica -fill darkblue -pointsize 36 -draw "text 900,500 '$WEATHERSTAT'" -font helvetica -fill orange -pointsize 24 -draw "text 900,450 '$INDOORSTAT'" ${tlTemp}/timelapse-${ts}.jpg
+nice convert ${pathToFile}/${wyzeFileName} -gravity SouthWest -transparent-color white -geometry 1600x700 ${pathToFile}/overlay-graph.png -compose ModulusSubtract -define compose:args=30 -composite -set option:modulate:colorspace hsb -background none -resize 1024x768 -font helvetica -fill white -stroke darkblue -strokewidth 1 -pointsize 36 -draw "text 900,500 '$WEATHERSTAT'" -stroke orange -blur 0 -strokewidth 1 -pointsize 24 -draw "text 900,450 '$INDOORSTAT'" ${tlTemp}/timelapse-${ts}.jpg
+
+# -blur 0x3 -stroke none -draw "text 900,450 '$INDOORSTAT'" ${tlTemp}/timelapse-${ts}.jpg
 
 
 cp ${tlTemp}/timelapse-${ts}.jpg ${pathToFile}/${timelapse}
@@ -51,7 +54,7 @@ if [ $force -eq 1 -o $br -le 45 -a $fc -ge 50 ]
 then
 	cat ${tlTemp}/*.jpg | nice ffmpeg -f image2pipe -r 1 -vcodec mjpeg -i - -vcodec libx264 ${tlTemp}/timelapse-${dt}.mp4
 	mv ${tlTemp}/timelapse-${dt}.mp4 ${pathToFile}/
-	rm -f ${tlTemp}/timelapse-*.jpg 
+	[ $force -eq 0 ] && rm -f ${tlTemp}/timelapse-*.jpg 
 	ls -1 ${pathToFile}/*mp4 | perl -pe 'chomp;s,.*/(.*?\.mp4),<a href=\1>\1<\/a><br>\n,' > ${pathToFile}/timelapse.html
 	chmod a+r ${pathToFile}/timelapse.html
 fi

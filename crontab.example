@@ -1,4 +1,5 @@
 # m h  dom mon dow   command
-*/10 * *   *   *     /home/pi/weather/updateplot
-*/11 * *   *   *     /home/pi/weather/updateindoors
+*/15 * *   *   *     /home/pi/weather/updateplot
+*/20 * *   *   *     /home/pi/weather/updateindoors
 */5 * *   *   *     /home/pi/weather/timelapse
+

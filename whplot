@@ -13,7 +13,7 @@ set style line 1
 set timefmt "%s"
 set xdata time
 set xlabel "Time"
-set xtics 43200 rotate 
+set xtics 86400 rotate 
 
 set timestamp
 set title "Weatherbandit data logger"

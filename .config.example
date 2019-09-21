@@ -1,4 +1,5 @@
 RRDFILE=temphum.rrd
+ARCH=archivedCSV/
 s3Bucket="myRainBushel"
 fileName="temperatureGraph.png"
 fileNameWk="temperatureGraph-weekly.png"
@@ -14,4 +15,3 @@ maxRetry=3
 minWyzeSize=200000000
 tlTemp=/tmp/timeLapse
 timelapse=timelapse.jpg
-
