@@ -1,0 +1,12 @@
+/home/pi/weather/wh.log
+{
+	rotate 52
+	weekly
+	missingok
+#	notifempty
+#	delaycompress
+#	compress
+	postrotate
+		systemctl restart weatherBandit > /dev/null
+	endscript
+}
