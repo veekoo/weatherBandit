@@ -8,9 +8,12 @@ dateFormatted=`date -R`
 aclhdr="x-amz-acl: public-read" 
 aclhdrCan=`echo ${aclhdr} | perl -pe 's,\s,,g'`
 
-for fileName in ${fileName} ${fileNameWk} ${wyzeFileName} ${timelapse}
+for fileName in ${fileName} ${fileNameWk} ${wyzeFileName} ${timelapse} ${timelapseVideo}
 do
-	echo Uploading ${fileName}
+	cT=${contentType}
+	[ "${timelapseVideo}" = "${fileName}" ] && cT=${contentTypeVideo}
+
+	echo Uploading ${fileName}  ${cT}
 
 	## Loop body has The Magic
 	relativePath="/${s3Bucket}/${fileName}"
@@ -19,12 +22,12 @@ do
 	relativePath="/${s3Bucket}/${fileName}"
 	aclhdr="x-amz-acl: public-read" 
 	aclhdrCan=`echo ${aclhdr} | perl -pe 's,\s,,g'`
-	stringToSign="PUT\n\n${contentType}\n${dateFormatted}\n${relativePath}"
+	stringToSign="PUT\n\n${cT}\n${dateFormatted}\n${relativePath}"
 	signature=`echo -en ${stringToSign} | openssl sha1 -hmac ${s3SecretKey} -binary | base64`
 	curl -X PUT -T "${pathToFile}/${fileName}" \
 	-H "Host: ${s3Bucket}.s3.amazonaws.com" \
 	-H "Date: ${dateFormatted}" \
-	-H "Content-Type: ${contentType}" \
+	-H "Content-Type: ${cT}" \
 	-H "Authorization: AWS ${s3AccessKey}:${signature}" \
 	http://${s3Bucket}.s3.amazonaws.com/${fileName}
 
@@ -32,7 +35,7 @@ do
 
 	date=`date +%Y%m%d`
 	dateFormatted=`date -R`
-	#stringToSign="PUT\n\n${dateFormatted}\n${contentType}\n${aclhdrCan}\n${relativePath}"
+	#stringToSign="PUT\n\n${dateFormatted}\n${cT}\n${aclhdrCan}\n${relativePath}"
 	stringToSign="PUT\n\n\n${dateFormatted}\n${aclhdrCan}\n${relativePath}?acl"
 	signature=`echo -en ${stringToSign} | openssl sha1 -hmac ${s3SecretKey} -binary | base64`
 	curl -X PUT \

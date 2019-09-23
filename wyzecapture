@@ -2,8 +2,6 @@
 
 source .config
 
-# ping -c 3 ${wyzeip}
-
 touch ${pathToFile}/${wyzeFileName}
 fs=0
 fs=`stat --printf="%s" ${pathToFile}/${wyzeFileName}`
@@ -11,7 +9,7 @@ retry=$maxRetry
 
 [ -f .wyzescanip ] && wyzeip=`cat .wyzescanip`
 
-if [ $fs -gt $minWyzeSize ] 
+if [ $fs -gt $minWyzeSize -a -f ${pathToFile}/${wyzeFileName} ] 
 then
 	mv -f ${pathToFile}/${wyzeFileName} ${pathToFile}/prev${wyzeFileName}
 fi
@@ -19,10 +17,10 @@ fi
 while [ $fs -lt $minWyzeSize -a $retry -gt 0 ]
 do
 	[ $retry -lt $maxRetry ] && echo Outfile too small: $(($fs / 1024)) kb. IP: $wyzeip Retries: $retry
-#	[ $retry -lt 2 ] && wyzeip=`nmap -Pn -p554 --open 10.0.0.1/24 | perl -ne 'print $1 if (/ for (.*)$/)'`
 	ffmpeg -ss 2 -i "rtsp://${wyzeuser}:${wyzepass}@${wyzeip}/live" -y -f image2 -qscale 0 -frames 1 ${pathToFile}/${wyzeFileName} 2> /tmp/wyzecapture.log
 	retry=$(($retry - 1))
 	fs=`stat --printf="%s" ${pathToFile}/${wyzeFileName}`
+	sleep 3
 done
 
 
