@@ -8,10 +8,11 @@ dateFormatted=`date -R`
 aclhdr="x-amz-acl: public-read" 
 aclhdrCan=`echo ${aclhdr} | perl -pe 's,\s,,g'`
 
-for fileName in ${fileName} ${fileNameWk} ${wyzeFileName} ${timelapse} ${timelapseVideo}
+for fileName in ${fileName} ${fileNameWk} ${wyzeFileName} ${timelapse} ${timelapseVideo} status
 do
 	cT=${contentType}
 	[ "${timelapseVideo}" = "${fileName}" ] && cT=${contentTypeVideo}
+	[ "status" = "${fileName}" ] && cT="text/plain"
 
 	echo Uploading ${fileName}  ${cT}
 

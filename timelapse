@@ -35,7 +35,7 @@ cp -f ${pathToFile}/${wyzeFileName} ${tlTemp}/timelapse-${ts}.jpg
 # Overlay graph
 # overlay plot on the video
 # imagemagick -size 400x100 xc:none -pointsize 36 -fill white -stroke blue -strokewidth 4 -gravity center -annotate +0+0 "Your Text Here" -blur 0x3 -stroke none -annotate +0+0 "Your Text Here" result.png
-nice convert ${pathToFile}/${wyzeFileName} -gravity SouthWest -transparent-color white -geometry 1600x700 ${pathToFile}/overlay-graph.png -compose ModulusSubtract -define compose:args=30 -composite -set option:modulate:colorspace hsb -background none -resize 1024x768 -font helvetica -fill white -stroke darkblue -strokewidth 1 -pointsize 36 -draw "text 900,500 '$WEATHERSTAT'" -stroke orange -blur 0 -strokewidth 1 -pointsize 24 -draw "text 900,450 '$INDOORSTAT'" ${tlTemp}/timelapse-${ts}.jpg
+nice convert ${pathToFile}/${wyzeFileName} -gravity SouthWest -transparent-color white -geometry 1600x700 ${pathToFile}/overlay-graph.png -compose ModulusSubtract -define compose:args=50 -composite -set option:modulate:colorspace hsb -background none -resize 1024x768 -font helvetica -fill white -stroke darkblue -strokewidth 1 -pointsize 36 -draw "text 900,500 '$WEATHERSTAT'" -stroke orange -blur 0 -strokewidth 1 -pointsize 24 -draw "text 900,450 '$INDOORSTAT'" ${tlTemp}/timelapse-${ts}.jpg
 
 # -blur 0x3 -stroke none -draw "text 900,450 '$INDOORSTAT'" ${tlTemp}/timelapse-${ts}.jpg
 
@@ -63,6 +63,18 @@ then
 	[ $force -eq 0 ] && rm -f ${tlTemp}/timelapse-*.jpg 
 	ls -1 ${pathToFile}/*mp4 | perl -pe 'chomp;s,.*/(.*?\.mp4),<a href=\1>\1<\/a><br>\n,' > ${pathToFile}/timelapse.html
 	chmod a+r ${pathToFile}/timelapse.html
+
 fi
+
+
+echo Brightness: $br > ${pathToFile}/status
+echo Files: $fc >> ${pathToFile}/status
+echo First: `ls ${tlTemp}/timelapse-15693*|head -1 |xargs stat -c %x` >> ${pathToFile}/status
+echo Last: `ls ${tlTemp}/timelapse-15693*|tail -1 |xargs stat -c %x` >> ${pathToFile}/status
+
+
+echo Weather: $WEATHERSTAT >> ${pathToFile}/status
+echo Indoors: $INDOORSTAT >> ${pathToFile}/status
+chmod a+r ${pathToFile}/status
 
  

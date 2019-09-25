@@ -1,0 +1,10 @@
+#!/bin/bash
+
+source .config
+
+ls ${pathToFile}/*mp4 | perl -pe 's,(.*),file \1,' > /tmp/files
+cat /tmp/files | perl -ne 'print "$1\n" if (/.*\/(.*?-\d+)-.*?\.mp4/);' | sort | uniq | xargs -I XXX -n 1 echo grep XXX- /tmp/files \> /tmp/day \; ffmpeg -f concat -safe 0 -protocol_whitelist "file,http,https,tcp,tls" -i /tmp/day -c copy ${pathToFile}/XXX.mp4 > /tmp/s
+. /tmp/s
+
+rm -f /tmp/files /tmp/day /tmp/s
+
