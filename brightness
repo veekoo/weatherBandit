@@ -2,7 +2,7 @@
 
 source .config
 
-
+touch ${pathToFile}/${wyzeFileName}
 [ ! -s  ${pathToFile}/${wyzeFileName} -o ! -f  ${pathToFile}/${wyzeFileName} ] && echo -1 && exit -1
 
 
@@ -11,10 +11,11 @@ convert /tmp/brightness-$$.png -resize 1x1 /tmp/out-$$.ppm
 br=`cat /tmp/out-$$.ppm | perl -ne 'if (/^255/){$o=1;next;};next if (!$o);@v=split(//);for $i (@v) { $c++;$s+=ord($i);}$br=($br+($s/$c))/2; print int($br);'`
 rm -f /tmp/out-$$.ppm /tmp/brightness-$$.png
 
+## Low entropy == Failed capture with The Bars
 failed=`identify -verbose ${pathToFile}/${wyzeFileName} | perl -ne '$fail=1 if (/entropy: (\d+\.\d+)/ && $1 < 0.5);END{ print defined($fail)?1:0; }'`
 
 # Make sure the entropy is not low due to low light..
-[ $br -gt 25 -a $failed -eq 1 ] && echo -1 && exit -1
+[ $br -gt 10 -a $failed -eq 1 ] && echo -1 && exit -1
 
 echo ${br}
 exit ${br}

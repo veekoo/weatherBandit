@@ -49,7 +49,7 @@ then
 fi
 
 # morning means more than 3 bright pics
-if [ $br -le 45 -a $fc -le 3 ]
+if [ $br -le 10 -a $fc -le 3 ]
 then
 	rm -f ${tlTemp}/timelapse-*.jpg
 fi
@@ -69,8 +69,8 @@ fi
 
 echo Brightness: $br > ${pathToFile}/status
 echo Files: $fc >> ${pathToFile}/status
-echo First: `ls ${tlTemp}/timelapse-15693*|head -1 |xargs stat -c %x` >> ${pathToFile}/status
-echo Last: `ls ${tlTemp}/timelapse-15693*|tail -1 |xargs stat -c %x` >> ${pathToFile}/status
+echo First: `ls ${tlTemp}/timelapse-*|head -1 |xargs stat -c %x` >> ${pathToFile}/status
+echo Last: `ls ${tlTemp}/timelapse-*|tail -1 |xargs stat -c %x` >> ${pathToFile}/status
 
 
 echo Weather: $WEATHERSTAT >> ${pathToFile}/status
