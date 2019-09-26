@@ -3,10 +3,9 @@
 # http://www.bradgoodman.com/
 # brad@bradgoodman.com
 ####################### Fill in settings below #######################
-USERNAME="ville.karaila@gmail.com"
-PASSWORD="TSubba21"
-#DEVICE_ID=012345
-DEVICE_ID=4214100
+USERNAME="username@mail.com"
+PASSWORD="password"
+DEVICE_ID=012345
 ############################ End settings ############################
 import urllib.request, urllib.error, urllib.parse
 import urllib.request, urllib.parse, urllib.error
